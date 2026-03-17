@@ -1,5 +1,5 @@
 # lokal-ai-for-arduino
-its not a neuronal system but a small thing that can learn its vibe coded
+its not a neuronal system but a small thing that can learn its vibe coded its german
 
 the uses are simple wirte that what u want dont missspell and write the subjekt big even when its sth like You
 its starts with a little databank but it learns from u
