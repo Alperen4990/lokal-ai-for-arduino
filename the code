@@ -1,0 +1,878 @@
+#include <EEPROM.h>
+
+// === MANUELLE DATENBANK (hier eintragen) ===
+// Format: "fragewort|antwort,fragewort|antwort,..."
+// Beispiel: "name|lil-mini,alter|ich bin neu,geschlecht|maennlich"
+const char MANUAL_DB[] ="Wasser|Lebenswichtige klare Fluessigkeit ohne Geschmack Geruch oder Farbe,Sonne|Zentraler Stern unseres Planetensystems spendet Licht und Waerme,Erde|Fester Boden unter unseren Fuessen Planet und Baumaterial,Feuer|Heisse Flamme durch Verbrennung eines der vier klassischen Elemente,Luft|Gasgemisch das wir atmen unsichtbar und ueberall vorhanden,Mensch|Intelligentes Lebewesen mit Sprache und Kultur,Kind|Junger Mensch,Familie|Verwandtschaftseinheit,Mutter|Weiblicher Elternteil,Vater|Maennlicher Elternteil,Essen|Nahrungsaufnahme zum Ueberleben,Trinken|Fluessigkeitsaufnahme zum Ueberleben,Schlafen|Ruhezustand zur Erholung,Lernen|Aneignung von Wissen,Arbeiten|Taetigkeit zur Broterwerbung,Haus|Gebaeude zum Wohnen,Bett|Moebel zum Schlafen und Liegen,Kuehlschrank|Elektrisches Geraet zur Kuehlung von Lebensmitteln im Haushalt,Herd|Kochstelle in der Kueche,Wasserhahn|Armatur zum Entnehmen von Wasser,Toilette|Sanitaergeraet zur Aufnahme von Koerperausscheidungen,Dusche|Einrichtung zum Waschen mit laufendem Wasser,Waschbecken|Becken zum Waschen von Haenden und Gesicht,Badewanne|Grosses Becken zum Baden im Liegen,Seife|Reinigungsmittel fuer Haut und Gegenstaende,Handtuch|Tuch zum Abtrocknen nach dem Waschen,Zahnbuerste|Buerste zum Reinigen der Zaehne,Zahnpasta|Paste zum Putzen der Zaehne,Kamm|Geraet mit Zinken zum Entwirren und Stylen von Haaren,Arzt|Mediziner zur Behandlung von Krankheiten,Krankenhaus|Einrichtung fuer stationaere medizinische Versorgung,Apotheke|Laden fuer Medikamente,Medizin|Heilmittel gegen Krankheiten,Krankheit|Stoerung der Gesundheit,Gesundheit|Zustand des Wohlbefindens,Fieber|Erhoehte Koerpertemperatur als Zeichen von Krankheit,Schmerz|Unangenehmes Koerpergefuehl,Verbrennung|Schaedigung der Haut durch Hitze Sonne oder Chemikalien,Erkaeltung|Virale Infektion der Atemwege mit Schnupfen und Husten,ErsteHilfeKasten|Behaeltnis mit Verbandsmaterial und Medikamenten,Kleidung|Textile Koerperbedeckung,Hose|Beinbekleidung fuer Unter oder Oberkoerper,Hemd|Oberteil mit Knoepfen und Kragen,TShirt|Einfaches Oberteil aus Baumwolle mit kurzen Aermeln,Pullover|Warmer Strickpulli fuer den Oberkoerper,Jacke|Oberteil zum Waermen und Schutz vor Wetter,Mantel|Lange warme Jacke fuer kaltes Wetter,Schuh|Fussbekleidung zum Schutz und Gehen,Socke|Fussbekleidung aus Stoff fuer innen im Schuh,Muetze|Kopfbedeckung zum Waermen oder Schutz,Schal|Langer Stoffstreifen um den Hals zum Waermen,Handschuhe|Fingerhandschuhe zum Waermen oder Schutz,Guertel|Band um die Taille zum Halten von Hosen oder als Accessoire,Ring|Schmuckstueck fuer Finger,Kette|Schmuckstueck fuer Hals oder Handgelenk,Uhr|Zeitmessgeraet zum Tragen am Handgelenk oder An der Wand,Brille|Sehhilfe mit Glaesern vor den Augen,Sonnenbrille|Brille mit getoenten Glaesern zum Schutz vor Sonne,Regenschirm|Schutz vor Regen mit zusammenklappbarem Gestell und Stoff,Tasche|Behaelter aus Stoff oder Leder zum Tragen von Gegenstaenden,Brot|Grundnahrungsmittel aus gemahlenem Getreide Wasser und Hefe,Milch|Weisse Fluessigkeit von Saeugetieren Basis fuer viele Lebensmittel,Fleisch|Muskelgewebe von Tieren als Nahrung,Fisch|Tier aus dem Wasser als Nahrung,Gemuese|Pflanzliche Nahrung,Obst|Fruechte als Nahrung,Apfel|Runde Frucht mit Kerngehaeuse waechst an Baeumen und ist weltweit beliebt,Banane|Lange gelbe Frucht ohne Kerne waechst in Buescheln an Palmen,Kartoffel|Knolle als Hauptbeilage,Reis|Getreidekorn als Beilage,Nudeln|Lange Teigwaren,Butter|Milchfett zum Streichen und Kochen,Kaese|Milcherzeugnis aus quarkartiger Masse,Zucker|Suesse Substanz aus Zuckerrohr oder Ruebe,Salz|Wuerzmittel und Konservierungsstoff,Pfeffer|Scharfes Wuerzmittel,Oel|Fett zum Kochen und Braten,Essig|Saeuerliches Fluessigkeit als Reinigungsmittel und Wuerzmittel,Tomate|Rote Frucht als Gemuese verwendet,Gurke|Gruenes Gemuese mit Kernen,Zwiebel|KnollenGemuese mit scharfem Geschmack,Knoblauch|Starke Knolle mit Zehen,Karotte|Orange Wurzelgemuese,Salat|Blattgemuese roh,Spinat|Blattgemuese mit Eisen,Brokkoli|Gruener Kohl in Buetenstaenden,Blumenkohl|Weisser Kohl in Buetenstaenden,Paprika|FruchtGemuese in verschiedenen Farben,Kohlrabi|Runder Staengelkohl,Weisskohl|Runder feste Kopfkohl,Rotkohl|Runder rote Kopfkohl,Lauch|Langes mildes Lauchgemuese,Mais|Gelbe Koerner am Kolben,Erbsen|Gruene Kugeln in Schoten,Bohnen|Laengliche Huelsenfruechte,Linsen|Kleine runde Huelsenfruechte,Kichererbsen|Runde beige Huelsenfruechte,Birne|Tropfenfoermiges Kernobst,Pflaume|Lila Steinobst,Kirsche|Kleines rotes Steinobst,Messer|Scharfes Werkzeug zum Schneiden von Lebensmitteln oder Materialien,Gabel|Essbesteck mit Zinken zum Aufspiessen von Speisen,Loeffel|Essbesteck mit Mulde zum Schoepfen von Fluessigkeiten oder weichen Speisen,Teller|Flaches Geschirr zum Servieren von Speisen,Tasse|Becher mit Henkel zum Trinken von heissen Getraenken,Glas|Durchsichtiges Gefaess zum Trinken oder Aufbewahren,Topf|Geschirr mit Deckel zum Kochen oder Aufwaermen von Speisen,Pfanne|Flaches Kochgeschirr mit Stiel zum Braten,Schuessel|Rundes tiefes Geschirr zum Mischen oder Servieren,Schneidebrett|Unterlage zum Schneiden von Lebensmitteln,Korkenzieher|Werkzeug zum Entfernen von Korken aus Flaschen,Dosenoeffner|Geraet zum Oeffnen von Konservendosen,Flaschenoeffner|Werkzeug zum Oeffnen von Flaschen mit Kronkorken,Kuechenrolle|Starkes Papiertuch fuer Kueche und Haushalt,Alufolie|Duenne Metallfolie zum Zudecken oder Grillen,Frischhaltefolie|Durchsichtige Plastikfolie zum Aufbewahren von Lebensmitteln,Gefrierbeutel|Dickere Plastiktueten zum Einfrieren von Lebensmitteln,Vorratsdose|Behaelter mit Deckel zum Aufbewahren von trockenen Lebensmitteln,Mikrowelle|Kuechengeraet zum schnellen Erwaermen von Speisen durch Mikrowellen,Ofen|Geschlossener Raum zum Backen Braten oder Erwaermen,Geschirrspueler|Maschine zum automatischen Reinigen von Geschirr,Waschmaschine|Geraet zum Waschen von Textilien,Waeschetrockner|Geraet zum Trocknen von feuchter Waesche,Staubsauger|Elektrisches Geraet zum Saugen von Staub und Schmutz,Buegeleisen|Heizgeraet mit flacher Sohle zum Glaetten von Waesche,Waescheleine|Schnur zum Aufhaengen von Waesche zum Trocknen,Waescheklammer|Klammer zum Befestigen von Waesche an der Leine,Waeschekorb|Behaelter fuer schmutzige Waesche,Besen|Handgeraet mit Borsten zum Fegen von Boeden,Eimer|Behaelter zum Tragen von Wasser oder anderen Fluessigkeiten,Tisch|Moebelstueck mit Platte und Beinen zum Essen Arbeiten oder Abstellen von Gegenstaenden,Stuhl|Sitzmoebel mit Rueckenlehne fuer eine Person,Sofa|Gepolstertes Sitzmoebel fuer mehrere Personen zum Entspannen,Schrank|Aufbewahrungsmoebel mit Tueren fuer Kleidung oder Gegenstaende,Regal|Offenes Aufbewahrungsmoebel mit Boeden fuer Buecher oder Dekoration,Lampe|Beleuchtungskoerper mit Lichtquelle fuer Innenraeume,Fenster|Oeffnung in der Wand mit Glas fuer Licht und Sicht nach draussen,Tuer|Bewegliche Wandoeffnung zum Betreten oder Schliessen von Raeumen,Boden|Flaeche unter den Fuessen in einem Raum meist aus Holz Fliesen oder Teppich,Decke|Obere Abschlussflaeche eines Raumes,Wand|Vertikale Begrenzung eines Raumes,Teppich|Bodenbelag aus weichem Gewebe zum Waermen und Dekorieren,Vorhang|Stoffbahn vor Fenstern zum Verdunkeln oder Dekorieren,Kissen|Weiches Polster zum Sitzen Liegen oder Dekorieren,Bettdecke|Warme Decke zum Zudecken im Bett,Kopfkissen|Weiches Kissen zum Schlafen fuer den Kopf,Matratze|Polsterung des Bettes zum Liegen,Lattenrost|Holzgestell unter der Matratze fuer Belueftung,Bettlaken|Duennes Tuch direkt auf der Matratze,Bettbezug|Huelse fuer die Bettdecke zum Waschen,Wolldecke|Warme Decke aus Schafwolle fuer kalte Naechte,Heizung|Einrichtung zum Erwaermen von Raeumen,Thermostat|Temperaturregler fuer Heizung oder Klimageraet,Kamin|Offene Feuerstelle zum Heizen und als Dekoration,Couchtisch|Niedriger Tisch vor dem Sofa fuer Getraenke und Zeitschriften,Esstisch|Tisch in der Kueche oder im Esszimmer fuer Mahlzeiten,Nachttisch|Kleiner Schrank neben dem Bett fuer Lampe und Wecker,Wecker|Geraet mit Alarm zum Aufwecken zu bestimmter Zeit,Sessel|Gepolsterter Sessel fuer eine Person,Hocker|Sitz ohne Lehne oft als Fussbank verwendet,Computer|Elektronisches Geraet zur Datenverarbeitung,Handy|Mobiltelefon fuer Anrufe und Nachrichten unterwegs,Internet|Weltweites Netzwerk von Computern,WLAN|Drahtloses Netzwerk fuer Internetzugang ohne Kabel,Router|Geraet zur Verteilung von Internet in der Wohnung,Bildschirm|Anzeigegeraet fuer Computer oder Laptop,Tastatur|Eingabegeraet mit Tasten fuer Buchstaben und Zahlen,Maus|Zeigegeraet fuer Computer mit Klickfunktion,Drucker|Geraet zum Ausdrucken von digitalen Dokumenten auf Papier,Scanner|Geraet zum Digitalisieren von Papierdokumenten,USBStick|Kleiner mobiler Speicher fuer Daten,Externe Festplatte|Tragbarer Speicher fuer grosse Datenmengen,CloudSpeicher|Onlinespeicher fuer Dateien auf fremden Servern,Passwort|Geheime Zeichenfolge zum Schutz von Konten und Daten,EMailAdresse|Elektronische Adresse fuer den Versand von Nachrichten,Suchmaschine|Internetdienst zum Auffinden von Webseiten,Browser|Programm zum Anzeigen von Internetseiten,Download|Herunterladen von Dateien aus dem Internet,Upload|Hochladen von Dateien ins Internet,Streaming|Wiedergabe von Video oder Musik ohne vorheriges Herunterladen,Videokonferenz|OnlineMeeting mit Video und Ton,Homeoffice|Arbeiten von zu Hause aus mit Computer,Webcam|Kamera fuer Computer fuer Videoanrufe,Headset|Kopfhoerer mit Mikrofon fuer Telefonate am Computer,Ladegeraet|Geraet zum Aufladen von Akkus oder Batterien,Steckdose|Wandanschluss fuer elektrische Geraete,Lichtschalter|Schalter an der Wand zum Ein und Ausschalten des Lichts,Fernbedienung|Handgeraet zur Bedienung von Fernseher oder anderen Geraeten,Fernseher|Geraet zum Empfangen und Anzeigen von Fernsehsendungen,Kamera|Digitales Geraet zum Fotografieren oder Filmen,Fotoapparat|Geraet zum Fotografieren,Virenschutz|Software zum Schutz vor Computerviren,Firewall|Schutzsystem gegen unerwuenschten Netzwerkzugriff,Update|Aktualisierung von Software auf neuere Version,App|Anwendung fuer Smartphones oder Tablets,Betriebssystem|Grundsoftware eines Computers,Datei|Digitale Sammlung von Daten,Ordner|Behaelter fuer Dateien,Desktop|Arbeitsflaeche eines Computers,Laptop|Tragbarer Computer,Fahrrad|Zweirad mit Pedalen zum Fortbewegen ohne Motor,Auto|Kraftfahrzeug mit vier Raedern und Motor,Bus|Grosses Fahrzeug fuer den Transport mehrerer Personen,Zug|Schienenfahrzeug fuer den Transport auf Gleisen,Flugzeug|Luftfahrzeug mit Tragflaechen zum Fliegen,Schiff|Wasserfahrzeug fuer Transport auf dem Wasser,Boot|Kleines Wasserfahrzeug fuer wenige Personen,UBahn|Untergrundbahn fuer den Nahverkehr in Staedten,Strassenbahn|Schienenfahrzeug auf Strassen fuer den Nahverkehr,Taxi|Mietwagen mit Fahrer fuer Einzelfahrten,Ampel|Lichtsignal zur Regelung des Strassenverkehrs,Zebrastreifen|Fussgaengerueberweg mit weissen Streifen,Buergersteig|Gehweg am Strassenrand fuer Fussgaenger,Strasse|Oeffentlicher Weg fuer Fahrzeuge,Bruecke|Bauwerk zur Ueberquerung von Hindernissen wie Fluessen oder Taelern,Tunnel|Unterirdische oder Unterwasserpassage,Tankstelle|Ort zum Betanken von Fahrzeugen,Parkplatz|Flaeche zum Abstellen von Fahrzeugen,Fuehrerschein|Berechtigung zum Fuehren von Kraftfahrzeugen,Fahrzeug|Fortbewegungsmittel mit Raedern,Motor|Antriebsmaschine fuer Fahrzeuge,Rad|Kreisfoermiges Teil zum Rollen,Reifen|Gummiring um ein Rad,Lenkrad|Steuerung fuer Fahrzeuge,Bremse|Vorrichtung zum Abbremsen von Fahrzeugen,Gaspedal|Pedal zum Beschleunigen,Kupplung|Kupplungspedal in einem Fahrzeug,Gangschaltung|Vorrichtung zum Schalten der Gaenge,Scheinwerfer|Licht an der Front eines Fahrzeugs,Blinker|Lichtsignal zum Anzeigen von Richtungsaenderungen,Baum|Grossholzige Pflanze mit Stamm und Krone,Blume|Pflanze mit Buete zur Dekoration oder als Geschenk,Gras|Niedrige Graeser als Bodenbewuchs,Strauch|Mehrjaehrige Pflanze mit verholzten Zweigen,Hecke|Reihe von Straeuchern als Grenze oder Windschutz,Garten|Abgegrenzter Bereich zum Anbau von Pflanzen oder zur Erholung,Rasen|Gemahtes Gras als Gartenflaeche,Wald|Grosse Flaeche mit vielen Baeumen,Park|Oeffentliche Gruenanlage zur Erholung,Wiese|Offene Gruenflaeche mit Gras,Feld|Landwirtschaftlich genutzte Flaeche,Berg|Grosse natuerliche Erhebung der Erdoberflaeche,Tal|Tiefe Vertiefung zwischen Bergen,Fluss|Natuerliches fliessendes Gewaesser zum Meer,See|Stehendes Gewaesser von verschiedener Groesse,Meer|Grosse Salzwasserflaeche zwischen Kontinenten,Ozean|Groesste Meere der Erde fuenf insgesamt,Insel|Von Wasser umgebenes Land,Kueste|Grenze zwischen Land und Meer,Strand|Sandiger oder steiniger Kuestenbereich,Welle|Bewegung des Wassers durch Wind,Sand|Feine Koerner aus Gestein an Straenden und Wuesten,Fels|Hartes Gestein grosser Stein,Hoehle|Natuerlicher Hohlraum im Fels,Gewitter|Starker Regen mit Blitz und Donner,Regenbogen|Farbiger Bogen durch Lichtbrechung in Wassertropfen,Himmel|Ueber uns befindliche Atmosphaere tagsueber blau,Horizont|Grenzlinie zwischen Himmel und Erde,Stern|Leuchtender Himmelskoerper in der Nacht,Mond|Natuerlicher Satellit der Erde bewegt sich in Phasen,Wolke|Sichtbare Ansammlung von Wassertropfen in der Luft,Regen|Fallende Wassertropfen aus Wolken,Schnee|Gefrorene Wasserkristalle die vom Himmel fallen,Wind|Bewegte Luft die man fuehlen aber nicht sieht,Nebel|Dichte Wolke am Boden die die Sicht einschraenkt,Eis|Gefrorenes Wasser fest bei null Grad,Frost|Eisbildung durch Kaelte auf Oberflaechen,Hitze|Hohe Temperatur die Schweiss verursacht,Kaelt|Niedrige Temperatur die frieren laesst,Blitz|Elektrische Entladung bei Gewittern,Zeit|Fortschreitende Abfolge von Ereignissen,Uhr|Geraet zur Zeitmessung und Anzeige,Kalender|System zur Einteilung der Zeit in Tage Wochen und Monate,Woche|Zeitraum von sieben Tagen,Monat|Zeitraum von etwa 30 Tagen zwoelf pro Jahr,Jahr|Zeitraum von zwoelf Monaten oder 365 Tagen,Tag|Zeitraum von 24 Stunden hell nach Sonnenaufgang,Nacht|Dunkle Zeit zwischen Sonnenuntergang und Sonnenaufgang,Morgen|Frueher Tag nach dem Aufwachen,Abend|Spaeter Tag vor der Nacht,Stunde|Zeitraum von 60 Minuten,Minute|Zeitraum von 60 Sekunden,Sekunde|Kleinste Standardzeiteinheit,Fruehling|Jahreszeit mit Buete und Wachstum Maerz bis Mai,Sommer|Waermste Jahreszeit mit langen Tagen Juni bis August,Herbst|Jahreszeit mit Blattfall und Ernte September bis November,Winter|Kaeltste Jahreszeit mit kurzen Tagen Dezember bis Februar,Datum|Angabe von Tag Monat und Jahr,Wochentag|Einer der sieben Tage einer Woche,Wochenende|Samstag und Sonntag als freie Tage,Feiertag|Tag ohne Arbeit zu besonderen Anlaessen,Geburtstag|Jahrestag der Geburt einer Person,Jahreszeit|Einer der vier Teile eines Jahres,Jahrhundert|Zeitraum von hundert Jahren,Jahrtausend|Zeitraum von tausend Jahren,Vergangenheit|Zeit vor dem Jetzt,Gegenwart|Die aktuelle Zeit,Zukunft|Zeit nach dem Jetzt,Termin|Vereinbarte Zeit fuer ein Treffen,Puenktlichkeit|Rechtzeitiges Erscheinen zu einem Termin,Gesellschaft|Gemeinschaft von Menschen,Staat|Politische Gemeinschaft mit territorialem Anspruch,Regierung|Leitung eines Staates,Demokratie|Herrschaft des Volkes durch Wahlen,Wahl|Abstimmung ueber Personen oder Themen,Politik|Lehre von der Staatsfuehrung,Partei|Politische Vereinigung mit gemeinsamen Zielen,Gesetz|Vom Staat erlassene Regelung,Verbot|Untersagung durch Gesetz oder Anordnung,Erlaubnis|Genehmigung etwas zu tun,Vertrag|Rechtsgueltige Vereinbarung zwischen Parteien,Unterschrift|Eigenhaendiger Name als Bestaetigung,Dokument|Schriftliches Urkundenstueck,Amt|Behoerdliche Stelle oder Funktion,Behoerde|Staatliche Verwaltungsstelle,Gericht|Rechtsprechende Behoerde,Polizei|Organisation fuer oeffentliche Sicherheit und Ordnung,Feuerwehr|Organisation fuer Brandbekaempfung und technische Hilfe,Rettungsdienst|Organisation fuer medizinische Notfallversorgung,Krankenversicherung|Versicherung fuer Krankheitskosten,Rentenversicherung|Pflichtversicherung fuer das Alter,Arbeitslosenversicherung|Pflichtversicherung fuer Arbeitslosigkeit,Unfallversicherung|Versicherung fuer Unfaelle,Haftpflichtversicherung|Versicherung fuer Schaeden an Dritten,Recht|Gesamtheit aller geltenden Gesetze,Pflicht|Etwas das man tun muss,Freiheit|Moeglichkeit zu handeln ohne Zwang,Gleichheit|Gleiche Rechte fuer alle Menschen,Gerechtigkeit|Angemessene Behandlung nach Recht und Billigkeit,Frieden|Zustand ohne Krieg,Krieg|Bewaffneter Konflikt zwischen Staaten oder Gruppen,Gewalt|Anwendung von physischer oder psychischer Kraft,Verbrechen|Straftat gegen geltendes Recht,Strafe|Sanktion fuer ein Verbrechen,Gefaengnis|Ort zur Freiheitsstrafe,Polizist|Ordnungshueter,Richter|Person die Recht spricht,Anwalt|Person die andere rechtlich vertritt,Zeuge|Person die etwas gesehen oder gehoert hat,Beweis|Tatsache die die Wahrheit einer Behauptung belegt,Wirtschaft|Gesamtheit aller wirtschaftlichen Aktivitaeten,Geld|Tauschmittel und Wertaufbewahrungsmittel,Euro|Waehrung der Europaeischen Union,Dollar|US amerikanische Waehrung,Cent|Hundertstel eines Euro,Bank|Finanzinstitut fuer Geldgeschaefte,Konto|Vertragliche Einrichtung bei einer Bank,Kreditkarte|Plastikkarte fuer bargeldloses Bezahlen weltweit,ECKarte|Bankkarte fuer bargeldloses Bezahlen und Geldabheben,Geldautomat|Geraet zum Abheben von Bargeld,Ueberweisung|Bankgeschaeft zum Uebertragen von Geld,Rechnung|Forderungsnachweis fuer gelieferte Waren oder Dienstleistungen,Quittung|Beleg ueber eine Zahlung,Kassenbon|Beleg ueber einen Einkauf,Preis|Geldbetrag fuer eine Ware oder Dienstleistung,Lohn|Verguetung fuer geleistete Arbeit,Gehalt|Regelmaessige Verguetung fuer Arbeit,Steuer|Abgabe an den Staat,MwSt|Mehrwertsteuer auf Waren und Dienstleistungen,Einkommen|Finanzielle Einnahmen einer Person,Ausgaben|Finanzielle Ausgaben einer Person,Sparen|Zuruecklegen von Geld fuer spaeter,Schulden|Finanzielle Verpflichtungen gegenueber anderen,Armut|Mangel an materiellen Guetern,Reichtum|Grosser Besitz an materiellen Guetern,Arbeit|Taetigkeit zur Erwirtschaftung von Einkommen,Beruf|Erlernte Erwerbstaetigkeit,Arbeitsplatz|Ort an dem man arbeitet,Arbeitslosigkeit|Zustand ohne Arbeit trotz Arbeitssuche,Rente|Altersbezuege nach dem Berufsleben,Schule|Bildungseinrichtung,Lehrer|Unterrichtender an der Schule,Schueler|Lernender an der Schule,Unterricht|Lehreinheit,Stunde|Zeiteinheit fuer Unterricht,Pause|Unterbrechung des Unterrichts,Klassenzimmer|Raum fuer Unterricht,Tafel|Schreibflaeche fuer Unterricht,Heft|Schreibheft fuer Schueler,Stift|Schreibgeraet fuer Schueler,Lineal|Messwerkzeug fuer Schueler,Radiergummi|Korrekturwerkzeug,Schulranzen|Tasche fuer Schulsachen,Zeugnis|Leistungsnachweis,Note|Bewertung der Leistung,Pruefung|Leistungskontrolle,Hausaufgabe|Aufgabe fuer zu Hause,Lesen|Erfassen geschriebener Texte,Schreiben|Festhalten von Sprache in Schrift,Rechnen|Ausfuehren mathematischer Operationen,Mathematik|Lehre von Zahlen und Formen,Sprache|System zur muendlichen und schriftlichen Kommunikation,Deutsch|Amtssprache Deutschlands,Englisch|Weltweit verbreitete Sprache,Woerterbuch|Buch fuer Wortbedeutungen,Buch|Gebundene Schrift,Bibliothek|Einrichtung fuer die Ausleihe von Buechern und Medien,Universitaet|Einrichtung fuer akademische Bildung und Forschung,Student|Person die studiert,Studium|Hochschulbildung,Abschluss|Erfolgreiches Beenden einer Ausbildung,Diplom|Urkunde ueber einen Abschluss,Wissen|Erworbenes Verstaendnis,Bildung|Aneignung von Wissen und Faehigkeiten,Intelligenz|Faehigkeit zu lernen und Probleme zu loesen,Kreativitaet|Faehigkeit Neues zu erschaffen,Kritisches Denken|Analyse und Bewertung von Informationen,Problemloesen|Finden von Loesungen fuer Probleme,Teamarbeit|Zusammenarbeit in einer Gruppe,Kommunikation|Austausch von Informationen,Wort|Kleinste bedeutungstragende Einheit einer Sprache,Satz|Zusammenhang von Woertern mit Aussage,Buchstabe|Grundzeichen des Alphabets,Alphabet|Gesamtheit aller Buchstaben einer Sprache,Zeitung|Taeglich erscheinende Nachrichtenpublikation,Zeitschrift|Periodisch erscheinende Publikation,Nachricht|Uebermittelte Information,Information|Wissen ueber etwas,Telefon|Geraet zur Sprachkommunikation ueber Entfernungen,Anruf|Telefonische Verbindung,SMS|Kurze Textnachricht,EMail|Elektronische Nachricht,Brief|Geschriebene Nachricht,Post|Einrichtung fuer Brief und Paketversand,Paket|Versandbehaelter fuer Gueter,Adresse|Angabe von Wohnort oder Standort,Telefonnummer|Kennung fuer Telefonanschluesse,Webseite|Dokument im World Wide Web,Soziale Medien|Online Plattformen zur Vernetzung,Chat|Schriftlicher Austausch in Echtzeit,Videocall|Videoanruf ueber das Internet,Konferenz|Besprechung mit mehreren Teilnehmern,Diskussion|Austausch verschiedener Meinungen,Debatte|Strukturierte Diskussion ueber ein Thema,Vortrag|Muendlicher Referat zu einem Thema,Praesentation|Vorfuehrung von Inhalten,Oeffentlichkeit|Gesamtheit aller Menschen,Presse|Journalistische Medien,Werbung|Kommerzielle Information,Propaganda|Gezielte Meinungsbeeinflussung,Geruecht|Unbestaetigte Information,Fake News|Falschinformation als Nachricht getarnt,Zensur|Kontrolle und Unterdrueckung von Informationen,Meinungsfreiheit|Recht auf freie Aeusserung,Pressefreiheit|Freiheit der journalistischen Berichterstattung,Datenschutz|Schutz persoenlicher Daten,Privatsphaere|Schutz der persoenlichen Angelegenheiten,Geheimnis|Information die nicht oeffentlich sein soll,Geruecht|Unbestaetigte Information,Nachricht|Uebermittelte Information,Wissenschaft|Systematische Erkenntnisgewinnung,Forschung|Systematische Untersuchung zur Wissenserweiterung,Experiment|Kontrollierter Versuch zur Ueberpruefung einer Hypothese,Hypothese|Annahme die wissenschaftlich geprueft wird,Theorie|Wissenschaftlich begruendeter Erklaerungsansatz,Naturgesetz|Naturgesetz beschreibt regelmaessige Vorgaenge,Physik|Naturwissenschaft von Materie und Energie,Chemie|Wissenschaft von Stoffen und ihrer Umwandlung,Biologie|Wissenschaft von Lebewesen,Astronomie|Wissenschaft von Himmelskoerpern,Geologie|Wissenschaft von der Erde,Psychologie|Wissenschaft von Verhalten und Erleben,Soziologie|Wissenschaft von Gesellschaft,Geschichte|Wissenschaft von der Vergangenheit,Philosophie|Lehre vom Wesen der Dinge und vom richtigen Handeln,Religion|Glaube an uebernatuerliche Maechte,Evolution|Entwicklung der Arten durch natuerliche Selektion,DNA|Traeger der genetischen Information,Gen|Erbliche Einheit,Zelle|Kleinste lebende Einheit,Organ|Koerperteil mit bestimmter Funktion,Organismus|Lebewesen,Oekosystem|Lebensgemeinschaft mit Umwelt,Umwelt|Umgebung in der ein Lebewesen lebt,Klima|Durchschnittliches Wetter einer Region,Klimawandel|Langfristige Aenderung des Klimas,Nachhaltigkeit|Verantwortungsvoller Umgang mit Ressourcen,Umweltschutz|Schutz der natuerlichen Umwelt,Recycling|Wiederverwertung von Materialien,Energie|Faehigkeit Arbeit zu verrichten,Strom|Elektrische Energie,Erneuerbare Energie|Energie aus nachwachsenden Quellen,Sonnenenergie|Energie aus Sonnenlicht,Windenergie|Energie aus Wind,Wasserkraft|Energie aus fliessendem Wasser,Atomkraft|Energie aus Kernspaltung,Verschmutzung|Belastung der Umwelt durch Schadstoffe,Plastik|Kunststoff aus Erdol,Kohlenstoff|Grundstoff des Lebens,Sauerstoff|Lebensnotwendiges Gas,Kunst|Schoepferische Taetigkeit,Musik|Kunst der Toene,Malerei|Kunst des Malens,Bildhauerei|Kunst des Bildhauens,Architektur|Kunst des Bauens,Literatur|Schriftliche Kunstwerke,Poesie|Dichtkunst,Roman|Langer erzaehlender Prosatext,Theater|Kunst der Schauspielerei,Film|Bewegtes Bild,Fotografie|Kunst des Fotografierens,Tanz|Kunst der Bewegung,Oper|Musiktheater,Ballett|Klassischer Tanz,Museum|Einrichtung fuer die Praesentation von Kunst oder Geschichte,Ausstellung|Oeffentliche Praesentation von Kunst oder Gegenstaenden,Konzert|Oeffentlicher Musikauffuehrung,Festival|Mehrtaegige Veranstaltung mit kulturellem Programm,Kultur|Gesamtheit geistiger und materieller Gueter einer Gesellschaft,Tradition|Ueberlieferte Brauche und Werte,Brauch|Uebliche Handlungsweise,Brauchtum|Gesamtheit der Brauche,Folklore|Volkskunde und Volkskunst,Kunstwerk|Werk der Kunst,Meisterwerk|Hervorragendes Kunstwerk,Sammlung|Zusammenstellung von Kunstwerken oder Objekten,Kuenstler|Person die Kunst schafft,Musiker|Person die Musik macht,Schauspieler|Person die Rollen spielt,Saenger|Person die singt,Taenzer|Person die tanzt,Maler|Person die malt oder anstreicht,Schriftsteller|Person die Buecher schreibt,Dichter|Person die Gedichte schreibt,Komponist|Person die Musik komponiert,Dirigent|Person die ein Orchester leitet,Orchester|Grosses Ensemble von Musikern,Chor|Gesangsgruppe,Band|Musikgruppe,Instrument|Geraet zum Erzeugen von Musik,Sport|Koerperliche Betaetigung,Fussball|Mannschaftssport mit Ball,Basketball|Mannschaftssport mit Ball und Koerben,Volleyball|Mannschaftssport mit Ball ueber Netz,Handball|Mannschaftssport mit Ball in der Hand,Tennis|Schlaegersport mit Ball,Tischtennis|Schlaegersport auf Tisch,Badminton|Schlaegersport mit Federball,Golf|Schlaegersport auf Platz,Schwimmen|Sportart im Wasser,Laufen|Fortbewegung zu Fuss in schnellem Tempo,Radfahren|Sport auf dem Fahrrad,Skifahren|Sport auf Schnee mit Skiern,Snowboard|Sport auf Schnee mit einem Brett,Eiskunstlauf|Sport auf Eis mit Schlittschuhen,Eishockey|Mannschaftssport auf Eis,Boxen|Kampfsport mit Fausten,Judo|Japanischer Kampfsport,Karate|Japanischer Kampfsport,Yoga|Indische Lehre von Koerper und Geist,Fitness|Koerperliche Fitness,Training|Systematisches Ueben,Wettkampf|Sportlicher Wettbewerb,Olympiade|Internationale Sportwettkämpfe,Medaille|Auszeichnung fuer sportliche Leistungen,Rekord|Hoechstleistung in einer Sportart,Mannschaft|Sportteam,Spiel|Wettbewerb nach Regeln,Regel|Vorschrift fuer ein Spiel,Schiedsrichter|Person die auf Einhaltung der Regeln achtet,Trainer|Person die andere trainiert,Verein|Zusammenschluss von Sportlern,Stadion|Sportstaette fuer Grossveranstaltungen,Halle|Ueberdachte Sportstaette,Platz|Freiflaeche in einer Ortschaft,Spielplatz|Freiflaeche mit Spielgeraeten fuer Kinder,Freizeit|Freie Zeit ausserhalb der Arbeit,Hobby|Freizeitbeschaeftigung,Spielzeug|Gegenstand zum Spielen,Puzzle|Legespiel mit Teilen,Gefuehl|Emotionale Empfindung,Emotion|Affektiver Zustand,Freude|Positives Gefuehl des Wohlbefindens,Glueck|Zustand tiefen Wohlbefindens,Liebe|Starke Zuneigung zu einer Person,Freundschaft|Vertrautes Verhaeltnis zwischen Personen,Zuneigung|Wohlwollende Gesinnung,Vertrauen|Ueberzeugung von der Zuverlaessigkeit,Respekt|Anerkennung und Wertschaetzung,Dankbarkeit|Gefuehl des Dankes,Stolz|Gefuehl der Zufriedenheit mit sich selbst,Traurigkeit|Negatives Gefuehl des Verlusts,Angst|Gefuehl der Bedrohung,Sorge|Gefuehl der Unruhe,Arger|Gefuehl der Veraergerung,Wut|Starke Form des Aergers,Eifersucht|Angst um den Verlust einer Person,Neid|Verlangen nach dem was andere haben,Scham|Gefuehl der Beschaemung,Schuld|Gefuehl der Verantwortung fuer ein Fehlverhalten,Einsamkeit|Gefuehl des Alleinseins,Langeweile|Gefuehl der Unzufriedenheit aus Mangel an Beschaeftigung,Ueberraschung|Ploetzliches unerwartetes Ereignis,Neugier|Verlangen nach neuem Wissen,Hoffnung|Erwartung eines positiven Ausgangs,Enttaeuschung|Gefuehl des Nichterfuelltwerdens,Zufriedenheit|Gefuehl des Genuegens,Motivation|Innerer Antrieb zu handeln,Ehrgeiz|Streben nach Erfolg,Geduld|Faehigkeit zu warten,Mut|Faehigkeit Angst zu ueberwinden,Tapferkeit|Mut in gefaehrlichen Situationen,Empathie|Faehigkeit sich in andere hineinzuversetzen,Intuition|Spontanes Erkennen ohne bewusstes Denken,Erinnerung|Wiederaufruf vergangener Erfahrungen,Traum|Erlebnis im Schlaf,Persoenlichkeit|Gesamtheit der individuellen Merkmale,Charakter|Gesamtheit der moralischen Eigenschaften,Temperament|Angeborene Verhaltensweise,Stress|Belastender Zustand,Sicherheit|Zustand der Geborgenheit,Gefahr|Moeglichkeit von Schaden,Risiko|Moeglichkeit eines negativen Ausgangs,Unfall|Ploetzliches ungewolltes Ereignis mit Schaden,Notfall|Dringender Hilfebedarf,Erste Hilfe|Sofortige Hilfe bei Unfaellen,Rettung|Befreiung aus Gefahr,Rettungsdienst|Organisation fuer medizinische Notfallversorgung,Krankenwagen|Fahrzeug fuer Patiententransport,Notarzt|Arzt fuer medizinische Notfaelle,Rettungswagen|Fahrzeug fuer Notfalltransport,Feuerloescher|Geraet zum Loeschen von Entstehungsbraenden,Feuerdecke|Decke zum Ersticken von Fettbraenden in der Kueche,Rauchmelder|Geraet zur Frueherkennung von Rauch und Feuer,Kohlenmonoxidmelder|Warngeraet fuer das giftige Gas bei Heizungsdefekten,Warnung|Hinweis auf eine Gefahr,Alarm|Signal zur Warnung,Evakuierung|Geraeumung eines Gefahrenbereichs,Schutz|Abwehr von Gefahren,Vorsicht|Achtsames Verhalten,Aufmerksamkeit|Konzentration auf etwas,Konzentration|Gespanntes Aufmerksamsein,Verantwortung|Uebernahme von Verpflichtungen,Pflichtbewusstsein|Bewusstsein fuer Verpflichtungen,Zuverlaessigkeit|Eigenschaft verlaesslich zu sein,Ehrlichkeit|Aufrichtigkeit und Wahrhaftigkeit,Fairness|Gerechtes Verhalten,Toleranz|Anerkennung anderer Meinungen und Lebensweisen,Hilfsbereitschaft|Bereitschaft zu helfen,Solidaritaet|Zusammengehoerigkeitsgefuehl und gegenseitige Unterstuetzung,Menschenrechte|Universelle Rechte aller Menschen,Gleichberechtigung|Gleiche Rechte fuer alle,Diskriminierung|Benachteiligung aufgrund von Merkmalen,Rassismus|Vorurteile gegenueber anderen Ethnien,Sexismus|Diskriminierung aufgrund des Geschlechts,Gewalt|Anwendung von physischer oder psychischer Kraft,Mobbing|Systematische Schikane,Belästigung|Laestige Bedraengung,Kriminalitaet|Gesamtheit aller Straftaten,Verbrechen|Straftat gegen geltendes Recht,Wohnung|Selbstaendige Wohneinheit,Miete|Entgelt fuer die Nutzung einer Wohnung,Nebenkosten|Zusaetzliche Kosten zur Miete,Gas|Brenngas fuer Heizung und Kochen,Muell|Abfall aus Haushalt und Produktion,Muelltonne|Grosser Behaelter fuer Hausmuell,Muellsack|Plastikbeutel als Innenfutter fuer Muelltonnen,Glascontainer|Container fuer Altglas,Altpapier|Altes Papier zum Recycling,Biomuell|Organische Abfaelle fuer Kompostierung,Sperrmuell|Grosse Abfaelle wie Moebel oder Elektrogeraete,Elektroschrott|Alte elektrische Geraete fuer Entsorgung,Balkon|Plattform an der Aussenseite eines Gebaeudes,Terrasse|Freiflaeche am Boden oder auf dem Dach,Keller|Unterirdischer Raum eines Hauses,Dachboden|Raum unter dem Dach,Garage|Raum zum Abstellen von Fahrzeugen,Gartenhaus|Kleines Nebengebaeude im Garten,Zaun|Abgrenzung aus verschiedenen Materialien,Hecke|Reihe von Straeuchern,Rasen|Gemahtes Gras,Blumenbeet|Bepflanzte Blumenflaeche,Gemuesebeet|Bepflanzte Gemueseflaeche,Kompost|Duenger aus organischen Abfaellen,Gartengeraet|Werkzeug fuer den Garten,Schubkarre|Transportgeraet mit einem Rad,Leiter|Geraet mit Sprossen zum Erreichen von Hoehen,Hammer|Schlagwerkzeug,Schraubenzieher|Werkzeug zum Drehen von Schrauben,Zange|Werkzeug zum Greifen oder Knipsen,Saege|Werkzeug zum Saegen,Bohrmaschine|Elektrisches Werkzeug zum Bohren,Werkzeugkasten|Behaelter fuer Werkzeuge,Schraube|Befestigungselement mit Gewinde,Nagel|Duennes Metallstueck zum Befestigen,Klebstoff|Substanz zum Verbinden von Materialien,Klebeband|Selbstklebendes Band zum Zusammenhalten oder Reparieren,Draht|Duennes Metall zum Binden,Schnur|Duennes flexibles Band,Seil|Langes flexibles Objekt zum Binden,Kette|Verbundene Metallringe,Einkaufen|Erwerb von Waren,Discounter|Preiswerter Supermarkt,Baeckerei|Laden fuer Brot und Backwaren,Metzgerei|Laden fuer Fleisch und Wurstwaren,Konditorei|Laden fuer Kuchen und Torten,Cafe|Lokal fuer Kaffee und Kuchen,Restaurant|Lokal fuer warme Mahlzeiten,Imbiss|Kleines Lokal fuer schnelle Mahlzeiten,Fastfood|Schnellrestaurant,Kiosk|Kleiner Laden fuer Zeitungen Getraenke und Suessigkeiten,Warenkorb|Virtueller Korb fuer Online Einkaeufe,Angebot|Waren zu einem bestimmten Preis,Nachfrage|Bedarf nach einer Ware,Qualitaet|Beschaftenheit einer Ware,Menge|Anzahl oder Umfang,Gewicht|Masse eines Koerpers,Groesse|Ausdehnung eines Koerpers,Farbe|Visuelle Eigenschaft durch Licht,Form|Aeussere Gestalt,Material|Stoff aus dem etwas besteht,Marke|Herstellerzeichen,Logo|Grafisches Zeichen einer Marke,Verpackung|Huelse um ein Produkt,Etikett|Aufkleber mit Produktinformationen,Preisschild|Schild mit dem Preis,Kasse|Zahlungsstelle im Geschaeft,Kassierer|Person an der Kasse,Kundenkarte|Karte fuer Stammkunden,Rabatt|Preisnachlass,Sonderangebot|Voruebergehend guenstiger Preis,Aktion|Befristetes Marketingereignis,Reklamation|Beschwerde ueber ein Produkt,Umtausch|Tausch gegen anderes Produkt,Rueckgabe|Zurueckgeben eines Produkts,Garantie|Herstellergarantie fuer ein Produkt,Rechnung|Forderungsnachweis fuer gelieferte Waren,Beleg|Nachweis einer Zahlung,Bargeld|Physisches Geld,Schein|Papiergeld,Muenze|Metallgeld,Reise|Fahrt oder Flug zu einem Ziel,Urlaub|Erholungszeit vom Beruf,Ferien|Schulurlaub,Reiseziel|Ort den man bereist,Hotel|Beherbergungsbetrieb,Pension|Kleines Hotel,Ferienwohnung|Wohnung fuer Urlauber,Campingplatz|Platz zum Zelten,Zelt|Transportable Unterkunft aus Stoff,Schlafsack|Warmer Beutel zum Schlafen im Freien,Rucksack|Tasche mit Schultergurten zum Tragen auf dem Ruecken,Koffer|Behaelter mit Deckel zum Transport von Kleidung auf Reisen,Reisepass|Amtlicher Ausweis fuer Reisen ins Ausland,Personalausweis|Amtlicher Ausweis fuer Inland und EU,Visum|Einreisegenehmigung fuer bestimmte Laender,Fahrkarte|Ticket fuer oeffentliche Verkehrsmittel,Flugticket|Ticket fuer einen Flug,Bahnhof|Ort zum Ein und Aussteigen in Zuege,Flughafen|Ort zum Starten und Landen von Flugzeugen,Hafen|Ort fuer Anlegen von Schiffen,Busbahnhof|Zentraler Ort fuer Busverbindungen,Reisefuehrer|Buch mit Tipps fuer Reiseziele,Landkarte|Karte zur Orientierung am Reiseziel,Sprachfuehrer|Buch mit wichtigen Vokabeln fuer Fremdsprachen,Sonnencreme|Schutz vor Sonnenbrand,Sonnenhut|Hut zum Schutz vor Sonne,Insektenspray|Schutz gegen Insektenstiche,ErsteHilfeSet|Behaeltnis mit Verbandsmaterial und Medikamenten,Reiseapotheke|Zusammengestellte Medikamente fuer unterwegs,Ladekabel|Kabel zum Laden des Handys,Kopfhoerer|Ohrhoerer fuer Musik oder Telefonate,Reisekissen|Aufblasbares oder komprimierbares Kissen fuer unterwegs,Schlafmaske|Augenbinde zum Schlafen bei Helligkeit,Ohrstoepsel|Schutz gegen Laerm beim Schlafen,Wecker|Geraet zum Wecken zu bestimmter Zeit,Taschenlampe|Tragbare Lichtquelle,Taschenmesser|Klappbares Messer mit verschiedenen Werkzeugen,Feuerzeug|Geraet zum Entzuenden von Feuer,Wasserflasche|Behaelter fuer Trinkwasser unterwegs,Thermoskanne|Isolierkanne fuer heisse oder kalte Getraenke,Tier|Lebewesen das sich bewegt und Nahrung aufnimmt,Pflanze|Lebewesen das waechst und Photosynthese betreibt,Hund|Haustier und treuer Begleiter,Katze|Haustier und Jäger,Vogel|Gefluegeltes Tier mit Federn,Fisch|Tier das im Wasser lebt,Pferd|Grosses Reit- und Zugtier,Kuh|Milchlieferndes Nutztier,Schwein|Nutztiere fuer Fleisch,Schaf|Nutztier fuer Wolle und Fleisch,Huhn|Nutztier fuer Eier und Fleisch,Ente|Wasservogel,Gans|Grosser Wasservogel,Taube|Vogel der Staedte,Spatz|Kleiner Singvogel,Amsel|Singvogel mit schwarzem Gefieder,Rotkehlchen|Kleiner Vogel mit rotem Brustgefieder,Eule|Nachtaktiver Raubvogel,Fledermaus|Saeugetier das fliegen kann,Maus|Kleines Nagetier,Ratte|Groesseres Nagetier,Hamster|Kleines Nagetier als Haustier,Meerschweinchen|Kleines Nagetier als Haustier,Kaninchen|Kleines Saeugetier mit langen Ohren,Hase|Wildes Saeugetier mit langen Ohren,Fuchs|Wilder Raubtier mit rotem Fell,Wolf|Wilder Rudeltier,Baer|Grosses Wildtier,Hirsch|Wildtier mit Geweihen,Reh|Kleines Wildtier,Wildschwein|Wildes Schwein,Igel|Stacheliges Wildtier,Eichhoernchen|Kleines Baumtier,Maulwurf|Unterirdisch lebendes Tier,Schlange|Kriechtier ohne Beine,Eidechse|Kriechtier mit Beinen,Frosch|Amphibie,Kroete|Landbewohnende Amphibie,Schmetterling|Insekt mit bunten Fluegeln,Biene|Honig produzierendes Insekt,Wetter|Zustand der Atmosphaere,Temperatur|Grad der Waerme,Kaelte|Niedrige Temperatur,Hitze|Hohe Temperatur,Sonne|Zentraler Stern unseres Planetensystems,Sonnenschein|Direkte Sonnenstrahlung,Sonnenaufgang|Aufgehen der Sonne,Sonnenuntergang|Untergehen der Sonne,Mittag|Hoechster Stand der Sonne,Mitternacht|Tiefste Nachtzeit,Daemmerung|Uebergang zwischen Tag und Nacht,Morgendaemmerung|Beginn des Tages,Abenddaemmerung|Ende des Tages,Wolke|Sichtbare Ansammlung von Wassertropfen,Bewoelkung|Bedeckung des Himmels mit Wolken,Nebel|Dichte Wolke am Boden,Regen|Fallende Wassertropfen,Nieselregen|Feiner Regen,Schauer|Plötzlicher Regen,Gewitter|Starkes Unwetter mit Blitz und Donner,Blitz|Elektrische Entladung,Donner|Knall beim Blitz,Schnee|Gefrorene Wasserkristalle,Schneefall|Fallender Schnee,Schneeregen|Regen mit Schnee vermischt,Hagel|Gefrorene Regentropfen,Eis|Gefrorenes Wasser,Frost|Eisbildung durch Kaelte,Tau|Feuchtigkeit am Morgen,Feuchtigkeit|Wassergehalt der Luft,Trockenheit|Mangel an Feuchtigkeit,Wind|Bewegte Luft,Sturm|Starker Wind,Orkan|Sehr starker Sturm,Tornado|Wirbelsturm,Hurrikan|Tropischer Wirbelsturm,Taifun|Asiatischer Wirbelsturm,Monsun|Jahreszeitlicher Wind,Klimawandel|Langfristige Aenderung des Klimas,Treibhauseffekt|Erwärmung durch Atmosphaerengase,Wespe|Stechendes Insekt,Hornisse|Grosse Wespe,Muecke|Blutsaugendes Insekt,Fliege|Insekt mit Fluegeln,Muecke|Kleines fliegendes Insekt,Spinne|Achtbeiniges Tier,Skorpion|Giftiges Spinnentier,Tausendfuessler|Vielbeiniges Tier,Schnecke|Langsames Tier mit Schale,Nacktschnecke|Schnecke ohne Schale,Wurm|Langweiliges Tier ohne Glieder,Regenwurm|Wurm im Boden,Seestern|Meerestier mit fuenf Armen,Qualle|Meerestier mit Tentakeln,Krabbe|Krebs mit Scheren,Hummer|Edler Meeres Krebs,Garnele|Kleiner Meeres Krebs,Muschel|Meerestier mit Schale,Auster|Essbare Muschel,Schnecke|Meeresschnecke,Tintenfisch|Weichtier mit Tentakeln,Oktopus|Achtarmiger Tintenfisch,Delphin|Intelligentes Meeressaeugetier,Wal|Grosses Meeressaeugetier,Seehund|Robbe,Robbe|Meeressaeugetier,Eisbaer|Weisser Baer,Pinguin|Flugunfaehiger Seevogel,Strauss|Großer flugunfaehiger Vogel,Papagei|Bunter Sprechvogel,Rabe|Schwarzer Vogel,Kraehe|Schwarzer Vogel,Elster|Schwarzweisser Vogel,Specht|Vogel der Baeume hackt,Eichelhaeher|Vogel mit blauen Federn,Storch|Grosser Vogel mit langem Schnabel,Schwan|Grosser Wasservogel,Falke|Greifvogel,Adler|Koenig der Lüfte,Geier|Aasfressender Vogel,Koerper|Physische Gestalt eines Menschen,Kopf|Obere Teil des Koerpers,Gesicht|Vordere Teil des Kopfes,Auge|Sehorgan,Ohr|Hoerorgan,Nase|Riechorgan,Mund|Ess und Sprechorgan,Lippe|Mundpartie,Zahn|Beisswerkzeug im Mund,Zunge|Organ zum Schmecken,Hals|Verbindung zwischen Kopf und Rumpf,Nacken|Rueckseite des Halses,Schulter|Verbindung von Arm und Rumpf,Arm|Obere Extremitaet,Ellenbogen|Gelenk des Arms,Hand|Greiforgan,Finger|Einzelne Glieder der Hand,Daumen|Erster Finger,Zeigefinger|Zweiter Finger,Mittelfinger|Dritter Finger,Ringfinger|Vierter Finger,Kleiner Finger|Fuenfter Finger,Rumpf|Mittlerer Teil des Koerpers,Brust|Vordere Teil des Rumpfes,Ruecken|Rueckseite des Rumpfes,Bauch|Unterer Teil des Rumpfes,Taille|Schmale Stelle des Koerpers,Huefte|Seitlicher Teil des Beckens,Bein|Untere Extremitaet,Knie|Gelenk des Beines,Fuss|Stand und Gehorgan,Ferse|Rueckseite des Fusses,Zehe|Einzelne Glieder des Fusses,Grosszehe|Erste Zehe,Kleiner Zeh|Fuenfte Zehe,Haut|Aeussere Bedeckung des Koerpers,Haar|Fadenartiges Wuchs auf der Haut,Nagel|Hornartige Platte an Fingern und Zehen,Knochen|Stabiles Element des Skeletts,Muskel|Bewegliches Organ,Farbe|Visuelle Eigenschaft,Rot|Grundfarbe der Waerme,Blau|Grundfarbe des Himmels,Gruen|Grundfarbe der Natur,Gelb|Grundfarbe der Sonne,Orange|Farbe zwischen Rot und Gelb,Lila|Farbe zwischen Rot und Blau,Rosa|Helles Rot,Braun|Erdfarbe,Schwarz|Farbe der Dunkelheit,Weiss|Farbe des Lichts,Grau|Farbe zwischen Schwarz und Weiss,Beige|Helle erdfarbene Farbe,Creme|Helle gelbliche Farbe,Gold|Goldene Farbe,Silber|Silberne Farbe,Bronze|Bronzefarbene Farbe,Kupfer|Kupferfarbene Farbe,Bunt|Viele Farben,Farbenfroh|Viele leuchtende Farben,Zahl|Mathematischer Wert,Null|Die Zahl 0,Eins|Die Zahl 1,Zwei|Die Zahl 2,Drei|Die Zahl 3,Vier|Die Zahl 4,Fuenf|Die Zahl 5,Sechs|Die Zahl 6,Sieben|Die Zahl 7,Acht|Die Zahl 8,Neun|Die Zahl 9,Zehn|Die Zahl 10,Hundert|Die Zahl 100,Tausend|Die Zahl 1000,Million|Die Zahl 1000000,Milliarde|Die Zahl 1000000000,Unendlich|Unbegrenzte Groesse,Gerade|Zahl teilbar durch 2,Ungerade|Zahl nicht teilbar durch 2,Primzahl|Zahl nur durch 1 und sich selbst teilbar,Form|Aeussere Gestalt,Kreis|Runde Form,Quadrat|Viereck mit gleichen Seiten,Rechteck|Viereck mit rechten Winkeln,Dreieck|Form mit drei Seiten,Sechseck|Form mit sechs Seiten,Achteck|Form mit acht Seiten,Kugel|Runder Koerper,Wuerfel|Quadratischer Koerper,Zylinder|Runde Saeule,Pyramide|Dreieckiger Koerper,Kegel|Spitz zulaufende Form,Oval|Eiförmige Form,Stern|Strahlenfoermige Form,Herz|Herzfoermige Form,Pfeil|Spitze Richtungsanzeige,Linie|Gerade Verbindung,Kurve|Gebogene Linie,Winkel|Raum zwischen zwei Linien,Ecke|Treffpunkt von Linien,Richtung|Himmelsrichtung oder Weg,Norden|Himmelsrichtung,Sueden|Himmelsrichtung,Osten|Himmelsrichtung,Westen|Himmelsrichtung,dein Name|Ich Heisse lilmini,dein Alter|Ich bin alt genug,dein Geschlecht|Btw ich bin ein roboter,deine Hobbys|in einen kleinen chip reingestopft werden";
+String inputText = "";
+String outputText = "";
+String lastQuestion = "";
+String lastSubject = "";
+String lastAdjective = "";
+bool waitingForAnswer = false;
+int learnMode = 0;
+
+// Für Undo-Funktion
+int lastAddedIndex = -1;
+int lastAddedType = 0;  // 1 = JaNein, 2 = WFrage
+
+// EEPROM-Konfiguration
+#define EEPROM_SIZE 512
+#define MAGIC_ADDR 0
+#define MAGIC_VALUE 42
+#define JA_NEIN_START 10
+#define JA_NEIN_MAX 15
+#define W_FRAGE_START 350
+#define W_FRAGE_MAX 15
+#define ENTRY_SIZE 34
+
+// RAM-Cache für gelernte Daten
+String jaNeinKeys[JA_NEIN_MAX];
+String jaNeinValues[JA_NEIN_MAX];
+int jaNeinCount = 0;
+
+String wFrageSubjects[W_FRAGE_MAX];
+String wFrageValues[W_FRAGE_MAX];
+int wFrageCount = 0;
+
+void setup() {
+  Serial.begin(9600);
+  delay(1000);
+  
+  Serial.println("=== Mini-KI Bot (3 Datenbanken) ===");
+  Serial.println("Manuelle DB: " + String(MANUAL_DB));
+  
+  // EEPROM initialisieren/laden
+  if (EEPROM.read(MAGIC_ADDR) != MAGIC_VALUE) {
+    Serial.println("Erster Start - initialisiere EEPROM...");
+    clearEEPROM();
+    EEPROM.write(MAGIC_ADDR, MAGIC_VALUE);
+    Serial.println("EEPROM bereit!");
+  } else {
+    Serial.println("Lade gelerntes Wissen aus EEPROM...");
+    loadFromEEPROM();
+    Serial.print("Geladen: ");
+    Serial.print(jaNeinCount);
+    Serial.print(" Ja/Nein, ");
+    Serial.print(wFrageCount);
+    Serial.println(" W-Fragen");
+  }
+  
+  Serial.println("Bot bereit! (Reset mit 'reset')");
+  Serial.println("Tippe 'db' zum Anzeigen\n");
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    inputText = Serial.readStringUntil('\n');
+    inputText.trim();
+    
+    String originalInput = inputText;
+    inputText.toLowerCase();
+
+    Serial.print("Du: ");
+    Serial.println(inputText);
+
+    // LERN-MODUS
+    if (waitingForAnswer) {
+      handleLearning(inputText);
+      return;
+    }
+
+    // === 1. RESET BEFEHL ===
+    if (inputText == "reset" || inputText == "resete dich") {
+      clearEEPROM();
+      EEPROM.write(MAGIC_ADDR, MAGIC_VALUE);
+      jaNeinCount = 0;
+      wFrageCount = 0;
+      lastAddedIndex = -1;
+      outputText = "Alles geloescht! Nur manuelle DB bleibt.";
+      Serial.print("Bot: ");
+      Serial.println(outputText);
+      return;
+    }
+
+    // === 2. FEHLER/UNDO BEFEHL ===
+    if (inputText == "falsch" || inputText == "fehler" || inputText == "nein" || inputText == "nö" || inputText == "noe") {
+      if (undoLastEntry()) {
+        outputText = "Entschuldigung! Ich habe den letzten Eintrag geloescht.";
+      } else {
+        outputText = "Entschuldigung, ich kann viele Fehler machen!";
+      }
+      Serial.print("Bot: ");
+      Serial.println(outputText);
+      return;
+    }
+
+    // === 3. MANUELLE DATENBANK PRÜFEN (zuerst!) ===
+    String manualAnswer = checkManualDB(inputText);
+    if (manualAnswer != "") {
+      outputText = manualAnswer;
+      Serial.print("Bot: ");
+      Serial.println(outputText);
+      return;
+    }
+
+    // === 4. GELERNTE DATENBANKEN PRÜFEN ===
+    String subject = extractSubject(originalInput);
+    String adjective = extractAdjective(inputText);
+    String key = subject + "_" + adjective;
+    
+    if (existsInJaNeinDB(key)) {
+      outputText = getFromJaNeinDB(key);
+    }
+    else if (checkWFrageDB(inputText, originalInput)) {
+      return;
+    }
+    
+    // === 5. RECHNEN ===
+    else if (containsNumber(inputText) && isMathQuestion(inputText)) {
+      outputText = calculate(inputText);
+    }
+
+    // === 6. JA/NEIN FRAGE (explizite Verben) ===
+    else if (isJaNeinQuestion(inputText)) {
+      if (subject == "" || adjective == "") {
+        outputText = "Ich verstehe nicht. (Format: Ist [Subjekt] [Adjektiv]?)";
+      } else {
+        outputText = "Ich weiss nicht. Ist " + subject + " " + adjective + "? (ja/nein)";
+        lastQuestion = key;
+        lastSubject = subject;
+        lastAdjective = adjective;
+        waitingForAnswer = true;
+        learnMode = 1;
+      }
+    }
+
+    // === 7. W-FRAGE ===
+    else if (isWQuestion(inputText)) {
+      String wSubject = extractImportantWord(originalInput);
+      
+      if (existsInWFrageDB(wSubject)) {
+        outputText = getFromWFrageDB(wSubject);
+      } else {
+        outputText = "Ich weiss nicht. Wer oder was ist " + wSubject + "?";
+        lastSubject = wSubject;
+        waitingForAnswer = true;
+        learnMode = 2;
+      }
+    }
+
+    // === 8. VERB AM ANFANG ===
+    else if (checkVerbStart(inputText, originalInput)) {
+      // Die Funktion macht jetzt alles selbst (outputText setzen oder lernen starten)
+      Serial.print("Bot: ");
+      Serial.println(outputText);
+      return;
+    }
+
+    // === 9. FRAGEZEICHEN ===
+    else if (inputText.endsWith("?")) {
+      outputText = "Fragezeichen erkannt";
+    }
+
+    // === 10. SONSTIGES ===
+    else if (inputText == "hi" || inputText == "hallo") {
+      outputText = "Hallo!";
+    }
+    else if (inputText == "danke") {
+      outputText = "Bitte!";
+    }
+    else if (inputText == "tschau") {
+      outputText = "Tschau!";
+    }
+    else if (inputText == "db") {
+      showDatabase();
+      return;
+    }
+    else if (isSingleWord(inputText)) {
+      outputText = inputText;
+    }
+    
+    // === 11. FALLBACK: Verb-Endung ===
+    else if (hasVerbEnding(inputText)) {
+      String verb = extractFirstWord(inputText);
+      String subj = extractSecondWord(inputText);
+      
+      if (subj == "") {
+        outputText = "Ich verstehe nicht. (Format: [Verb] [Subjekt])";
+      } else {
+        key = verb + "_" + subj;
+        
+        if (existsInJaNeinDB(key)) {
+          outputText = getFromJaNeinDB(key);
+        } else {
+          outputText = "Ich weiss nicht. Koennen " + subj + " " + verb + "? (ja/nein)";
+          lastQuestion = key;
+          lastSubject = subj;
+          lastAdjective = verb;
+          waitingForAnswer = true;
+          learnMode = 1;
+        }
+      }
+    }
+    
+    // === 12. DEFAULT ===
+    else {
+      outputText = "Sorry, kein Kontext gefunden!";
+    }
+
+    Serial.print("Bot: ");
+    Serial.println(outputText);
+  }
+}
+
+// === MANUELLE DATENBANK ===
+
+String checkManualDB(String input) {
+  // Parse MANUAL_DB: "fragewort|antwort,fragewort|antwort,..."
+  String db = String(MANUAL_DB);
+  db.toLowerCase();
+  input.toLowerCase();
+  
+  int start = 0;
+  while (start < db.length()) {
+    // Finde nächsten Eintrag (bis Komma)
+    int comma = db.indexOf(',', start);
+    if (comma < 0) comma = db.length();
+    
+    String entry = db.substring(start, comma);
+    
+    // Teile in fragewort und antwort
+    int pipe = entry.indexOf('|');
+    if (pipe > 0) {
+      String trigger = entry.substring(0, pipe);
+      String answer = entry.substring(pipe + 1);
+      
+      // Prüfe ob trigger im input vorkommt
+      if (input.indexOf(trigger) >= 0) {
+        return answer;
+      }
+    }
+    
+    start = comma + 1;
+  }
+  
+  return ""; // Nichts gefunden
+}
+
+// === LERN-FUNKTIONEN ===
+
+void handleLearning(String answer) {
+  waitingForAnswer = false;
+  bool success = false;
+  
+  if (learnMode == 1) {
+    String cleanAnswer = "";
+    if (answer.indexOf("ja") >= 0) cleanAnswer = "ja";
+    else if (answer.indexOf("nein") >= 0) cleanAnswer = "nein";
+    
+    if (cleanAnswer != "") {
+      success = saveToJaNeinDB(lastQuestion, cleanAnswer);
+      if (success) {
+        outputText = "Gelernt! " + lastSubject + " " + lastAdjective + " -> " + cleanAnswer;
+      } else {
+        outputText = "Fehler: DB voll!";
+      }
+    } else {
+      outputText = "Bitte mit ja oder nein antworten.";
+      waitingForAnswer = true;
+      return;
+    }
+  }
+  else if (learnMode == 2) {
+    success = saveToWFrageDB(lastSubject, answer);
+    if (success) {
+      outputText = "Ok gespeichert, " + answer;
+    } else {
+      outputText = "Fehler: DB voll!";
+    }
+  }
+  
+  learnMode = 0;
+  Serial.print("Bot: ");
+  Serial.println(outputText);
+}
+
+bool undoLastEntry() {
+  if (lastAddedType == 1 && lastAddedIndex >= 0 && lastAddedIndex < jaNeinCount) {
+    Serial.print("[UNDO] Lösche Ja/Nein Eintrag ");
+    Serial.println(lastAddedIndex);
+    
+    int addr = JA_NEIN_START + (lastAddedIndex * ENTRY_SIZE);
+    EEPROM.write(addr, 0xFF);
+    
+    for (int i = lastAddedIndex; i < jaNeinCount - 1; i++) {
+      jaNeinKeys[i] = jaNeinKeys[i + 1];
+      jaNeinValues[i] = jaNeinValues[i + 1];
+    }
+    jaNeinCount--;
+    
+    lastAddedIndex = -1;
+    lastAddedType = 0;
+    return true;
+  }
+  else if (lastAddedType == 2 && lastAddedIndex >= 0 && lastAddedIndex < wFrageCount) {
+    Serial.print("[UNDO] Lösche W-Frage Eintrag ");
+    Serial.println(lastAddedIndex);
+    
+    int addr = W_FRAGE_START + (lastAddedIndex * ENTRY_SIZE);
+    EEPROM.write(addr, 0xFF);
+    
+    for (int i = lastAddedIndex; i < wFrageCount - 1; i++) {
+      wFrageSubjects[i] = wFrageSubjects[i + 1];
+      wFrageValues[i] = wFrageValues[i + 1];
+    }
+    wFrageCount--;
+    
+    lastAddedIndex = -1;
+    lastAddedType = 0;
+    return true;
+  }
+  
+  return false;
+}
+
+// === EEPROM FUNKTIONEN ===
+
+void clearEEPROM() {
+  for (int i = 0; i < EEPROM_SIZE; i++) {
+    EEPROM.write(i, 0xFF);
+  }
+}
+
+void loadFromEEPROM() {
+  jaNeinCount = 0;
+  for (int i = 0; i < JA_NEIN_MAX; i++) {
+    int addr = JA_NEIN_START + (i * ENTRY_SIZE);
+    if (EEPROM.read(addr) == 1) {
+      jaNeinKeys[i] = readEEPROMString(addr + 1, 16);
+      jaNeinValues[i] = readEEPROMString(addr + 17, 16);
+      jaNeinCount++;
+    }
+  }
+  
+  wFrageCount = 0;
+  for (int i = 0; i < W_FRAGE_MAX; i++) {
+    int addr = W_FRAGE_START + (i * ENTRY_SIZE);
+    if (EEPROM.read(addr) == 1) {
+      wFrageSubjects[i] = readEEPROMString(addr + 1, 16);
+      wFrageValues[i] = readEEPROMString(addr + 17, 16);
+      wFrageCount++;
+    }
+  }
+}
+
+void saveToEEPROM(int type, int index, String key, String value) {
+  int addr;
+  if (type == 1) addr = JA_NEIN_START + (index * ENTRY_SIZE);
+  else addr = W_FRAGE_START + (index * ENTRY_SIZE);
+  
+  EEPROM.write(addr, 1);
+  writeEEPROMString(addr + 1, 16, key);
+  writeEEPROMString(addr + 17, 16, value);
+}
+
+String readEEPROMString(int addr, int maxLen) {
+  String result = "";
+  for (int i = 0; i < maxLen; i++) {
+    char c = EEPROM.read(addr + i);
+    if (c == 0 || c == 0xFF) break;
+    result += c;
+  }
+  return result;
+}
+
+void writeEEPROMString(int addr, int maxLen, String str) {
+  int len = str.length();
+  if (len > maxLen - 1) len = maxLen - 1;
+  
+  for (int i = 0; i < len; i++) {
+    EEPROM.write(addr + i, str[i]);
+  }
+  EEPROM.write(addr + len, 0);
+  for (int i = len + 1; i < maxLen; i++) {
+    EEPROM.write(addr + i, 0);
+  }
+}
+
+// === TEXT-HILFSFUNKTIONEN ===
+
+String extractFirstWord(String sentence) {
+  int spaceIdx = sentence.indexOf(' ');
+  if (spaceIdx < 0) return sentence;
+  String result = sentence.substring(0, spaceIdx);
+  result.toLowerCase();
+  return result;
+}
+
+String extractSecondWord(String sentence) {
+  int firstSpace = sentence.indexOf(' ');
+  if (firstSpace < 0) return "";
+  
+  int secondSpace = sentence.indexOf(' ', firstSpace + 1);
+  String result;
+  if (secondSpace < 0) {
+    result = sentence.substring(firstSpace + 1);
+  } else {
+    result = sentence.substring(firstSpace + 1, secondSpace);
+  }
+  result.toLowerCase();
+  return result;
+}
+
+bool hasVerbEnding(String s) {
+  int len = 0;
+  while (len < s.length() && s[len] != ' ') len++;
+  if (len < 2) return false;
+  
+  String firstWord = s.substring(0, len);
+  
+  if (firstWord.endsWith("e")) return true;
+  if (firstWord.endsWith("st")) return true;
+  if (firstWord.endsWith("t")) return true;
+  if (firstWord.endsWith("en")) return true;
+  if (firstWord.endsWith("te")) return true;
+  if (firstWord.endsWith("test")) return true;
+  if (firstWord.endsWith("tet")) return true;
+  if (firstWord.endsWith("ten")) return true;
+  
+  return false;
+}
+
+String extractSubject(String sentence) {
+  String words[10];
+  int wordCount = 0;
+  String current = "";
+  
+  for (int i = 0; i <= sentence.length(); i++) {
+    if (i == sentence.length() || sentence[i] == ' ') {
+      if (current.length() > 0) {
+        words[wordCount++] = current;
+        current = "";
+      }
+    } else {
+      current += sentence[i];
+    }
+  }
+  
+  bool foundVerb = false;
+  for (int i = 0; i < wordCount; i++) {
+    String lower = words[i];
+    lower.toLowerCase();
+    
+    if (!foundVerb) {
+      if (isVerb(lower)) {
+        foundVerb = true;
+      }
+      continue;
+    }
+    
+    if (words[i].length() > 0) {
+      char firstChar = words[i][0];
+      if (firstChar >= 'A' && firstChar <= 'Z') {
+        String result = words[i];
+        result.toLowerCase();
+        return result;
+      }
+    }
+  }
+  
+  return "";
+}
+
+String extractAdjective(String sentence) {
+  String words[10];
+  int wordCount = 0;
+  String current = "";
+  
+  for (int i = 0; i <= sentence.length(); i++) {
+    if (i == sentence.length() || sentence[i] == ' ') {
+      if (current.length() > 0) {
+        words[wordCount++] = current;
+        current = "";
+      }
+    } else {
+      current += sentence[i];
+    }
+  }
+  
+  if (wordCount >= 2) {
+    String last = words[wordCount - 1];
+    if (last.endsWith("?")) {
+      last = last.substring(0, last.length() - 1);
+    }
+    last.toLowerCase();
+    return last;
+  }
+  
+  return "";
+}
+
+String extractImportantWord(String sentence) {
+  String pronomen[] = {"ich", "du", "er", "sie", "es", "wir", "ihr"};
+  String ignoreWords[] = {"wer", "was", "wo", "wann", "warum", "wie", "womit", 
+                          "wovon", "wobei", "woran", "worum", "wofuer", "wohin"};
+  
+  String words[10];
+  int wordCount = 0;
+  String current = "";
+  
+  for (int i = 0; i <= sentence.length(); i++) {
+    if (i == sentence.length() || sentence[i] == ' ') {
+      if (current.length() > 0) {
+        words[wordCount++] = current;
+        current = "";
+      }
+    } else {
+      current += sentence[i];
+    }
+  }
+  
+  for (int i = 0; i < wordCount; i++) {
+    String lowerWord = words[i];
+    lowerWord.toLowerCase();
+    
+    for (int p = 0; p < 7; p++) {
+      if (lowerWord == pronomen[p]) {
+        return lowerWord;
+      }
+    }
+  }
+  
+  for (int i = 0; i < wordCount; i++) {
+    String lowerCheck = words[i];
+    lowerCheck.toLowerCase();
+    
+    bool ignore = false;
+    for (int ig = 0; ig < 13; ig++) {
+      if (lowerCheck == ignoreWords[ig]) {
+        ignore = true;
+        break;
+      }
+    }
+    if (ignore) continue;
+    
+    if (words[i].length() > 0) {
+      char firstChar = words[i][0];
+      if (firstChar >= 'A' && firstChar <= 'Z') {
+        return words[i];
+      }
+    }
+  }
+  
+  if (wordCount > 0) {
+    for (int i = wordCount - 1; i >= 0; i--) {
+      String lowerCheck = words[i];
+      lowerCheck.toLowerCase();
+      
+      bool ignore = false;
+      for (int ig = 0; ig < 13; ig++) {
+        if (lowerCheck == ignoreWords[ig]) {
+          ignore = true;
+          break;
+        }
+      }
+      if (!ignore) {
+        lowerCheck.toLowerCase();
+        return lowerCheck;
+      }
+    }
+  }
+  
+  return "das";
+}
+
+bool isVerb(String word) {
+  String verbs[] = {"ist", "sind", "war", "waren", "hat", "haben", "hast", "habt",
+                    "kann", "können", "kannst", "macht", "machen", "tut", "tun",
+                    "geht", "gehen", "kommt", "kommen", "sieht", "sehen", "bist",
+                    "fliegt", "fliegen", "schwimmt", "schwimmen"};
+  for (int i = 0; i < 26; i++) {
+    if (word == verbs[i]) return true;
+  }
+  return false;
+}
+
+bool checkVerbStart(String s, String originalInput) {
+  String words[10];
+  int wordCount = 0;
+  int start = 0;
+  
+  for (int i = 0; i <= s.length(); i++) {
+    if (i == s.length() || s[i] == ' ') {
+      if (i > start) {
+        words[wordCount++] = s.substring(start, i);
+      }
+      start = i + 1;
+    }
+  }
+  
+  if (wordCount == 0) return false;
+  
+  String firstWord = words[0];
+  String lowerFirst = firstWord;
+  lowerFirst.toLowerCase();
+  
+  // Prüfe ob es ein Verb ist (endungen oder in der verb-liste)
+  bool isVerbStart = false;
+  if (lowerFirst.endsWith("e") || lowerFirst.endsWith("st") || 
+      lowerFirst.endsWith("t") || lowerFirst.endsWith("en") ||
+      lowerFirst.endsWith("te") || lowerFirst.endsWith("test") ||
+      lowerFirst.endsWith("tet") || lowerFirst.endsWith("ten") ||
+      isVerb(lowerFirst)) {
+    isVerbStart = true;
+  }
+  
+  if (!isVerbStart) return false;
+  
+  // Extrahiere Subjekt (zweites Wort oder danach)
+  String subject = "";
+  for (int i = 1; i < wordCount; i++) {
+    String word = words[i];
+    // Überspringe Artikel
+    String lowerWord = word;
+    lowerWord.toLowerCase();
+    if (lowerWord == "der" || lowerWord == "die" || lowerWord == "das" ||
+        lowerWord == "ein" || lowerWord == "eine" || lowerWord == "einer" ||
+        lowerWord == "den" || lowerWord == "dem") {
+      continue;
+    }
+    subject = word;
+    break;
+  }
+  
+  if (subject == "") {
+    outputText = "Ich verstehe nicht. (Format: [Verb] [Subjekt])";
+    return true; // true weil wir es als Verb erkannt haben, auch wenn unvollständig
+  }
+  
+  // Entferne Fragezeichen vom Verb
+  if (firstWord.endsWith("?")) {
+    firstWord = firstWord.substring(0, firstWord.length() - 1);
+  }
+  subject.toLowerCase();
+  
+  String key = firstWord + "_" + subject;
+  
+  // Prüfe ob wir es schon kennen
+  if (existsInJaNeinDB(key)) {
+    outputText = getFromJaNeinDB(key);
+  } else {
+    // Frage nach
+    outputText = "Ich weiss nicht. Koennen " + subject + " " + firstWord + "? (ja/nein)";
+    lastQuestion = key;
+    lastSubject = subject;
+    lastAdjective = firstWord; // Hier speichern wir das Verb
+    waitingForAnswer = true;
+    learnMode = 1;
+  }
+  
+  return true;
+}
+
+bool isWQuestion(String s) {
+  return s.startsWith("wer") || s.startsWith("was") || 
+         s.startsWith("wo")  || s.startsWith("wann") ||
+         s.startsWith("warum") || s.startsWith("wie");
+}
+
+bool isJaNeinQuestion(String s) {
+  String starters[] = {"ist", "sind", "kann", "können", "hat", "haben", 
+                       "macht", "tut", "fliegt", "schwimmt", "bist", "geht",
+                       "war", "waren", "kommt", "sieht", "hast", "habt"};
+  for (int i = 0; i < 18; i++) {
+    if (s.startsWith(starters[i])) return true;
+  }
+  return false;
+}
+
+// === DATENBANK-FUNKTIONEN ===
+
+bool saveToJaNeinDB(String key, String answer) {
+  if (jaNeinCount >= JA_NEIN_MAX) return false;
+  
+  jaNeinKeys[jaNeinCount] = key;
+  jaNeinValues[jaNeinCount] = answer;
+  
+  saveToEEPROM(1, jaNeinCount, key, answer);
+  
+  lastAddedIndex = jaNeinCount;
+  lastAddedType = 1;
+  
+  jaNeinCount++;
+  
+  Serial.print("[DB] Ja/Nein: ");
+  Serial.print(key);
+  Serial.print(" -> ");
+  Serial.println(answer);
+  return true;
+}
+
+String getFromJaNeinDB(String key) {
+  for (int i = 0; i < jaNeinCount; i++) {
+    if (jaNeinKeys[i] == key) {
+      return jaNeinValues[i];
+    }
+  }
+  return "";
+}
+
+bool existsInJaNeinDB(String key) {
+  return getFromJaNeinDB(key) != "";
+}
+
+bool saveToWFrageDB(String subject, String answer) {
+  if (wFrageCount >= W_FRAGE_MAX) return false;
+  
+  wFrageSubjects[wFrageCount] = subject;
+  wFrageValues[wFrageCount] = answer;
+  
+  saveToEEPROM(2, wFrageCount, subject, answer);
+  
+  lastAddedIndex = wFrageCount;
+  lastAddedType = 2;
+  
+  wFrageCount++;
+  
+  Serial.print("[DB] W-Frage: ");
+  Serial.print(subject);
+  Serial.print(" -> ");
+  Serial.println(answer);
+  return true;
+}
+
+String getFromWFrageDB(String subject) {
+  for (int i = 0; i < wFrageCount; i++) {
+    if (wFrageSubjects[i] == subject) {
+      return wFrageValues[i];
+    }
+  }
+  return "";
+}
+
+bool existsInWFrageDB(String subject) {
+  return getFromWFrageDB(subject) != "";
+}
+
+bool checkWFrageDB(String input, String originalInput) {
+  String subject = extractImportantWord(originalInput);
+  String answer = getFromWFrageDB(subject);
+  if (answer != "") {
+    outputText = answer;
+    Serial.print("Bot: ");
+    Serial.println(outputText);
+    return true;
+  }
+  return false;
+}
+
+void showDatabase() {
+  Serial.println("\n=== DATENBANKEN ===");
+  
+  // Manuelle DB
+  Serial.println("Manuelle DB:");
+  Serial.println("  " + String(MANUAL_DB));
+  
+  // Gelernte Ja/Nein
+  Serial.println("\nGelernte Ja/Nein:");
+  if (jaNeinCount == 0) {
+    Serial.println("  (leer)");
+  } else {
+    for (int i = 0; i < jaNeinCount; i++) {
+      Serial.print("  [");
+      Serial.print(i);
+      Serial.print("] ");
+      Serial.print(jaNeinKeys[i]);
+      Serial.print(" -> ");
+      Serial.println(jaNeinValues[i]);
+    }
+  }
+  
+  // Gelernte W-Fragen
+  Serial.println("\nGelernte W-Fragen:");
+  if (wFrageCount == 0) {
+    Serial.println("  (leer)");
+  } else {
+    for (int i = 0; i < wFrageCount; i++) {
+      Serial.print("  [");
+      Serial.print(i);
+      Serial.print("] ");
+      Serial.print(wFrageSubjects[i]);
+      Serial.print(" -> ");
+      Serial.println(wFrageValues[i]);
+    }
+  }
+  
+  Serial.println("=================\n");
+}
+
+// === RECHNEN ===
+
+bool isMathQuestion(String s) {
+  return s.indexOf("+") >= 0 || s.indexOf("-") >= 0 || 
+         s.indexOf("*") >= 0 || s.indexOf("/") >= 0 ||
+         s.indexOf("plus") >= 0 || s.indexOf("minus") >= 0 || 
+         s.indexOf("mal") >= 0 || s.indexOf("geteilt") >= 0;
+}
+
+String calculate(String s) {
+  int num1 = 0, num2 = 0;
+  char op = ' ';
+  
+  int i = 0;
+  while (i < s.length() && !isDigit(s[i])) i++;
+  while (i < s.length() && isDigit(s[i])) {
+    num1 = num1 * 10 + (s[i] - '0');
+    i++;
+  }
+  
+  while (i < s.length()) {
+    if (s[i] == '+') { op = '+'; break; }
+    if (s[i] == '-') { op = '-'; break; }
+    if (s[i] == '*') { op = '*'; break; }
+    if (s[i] == '/') { op = '/'; break; }
+    if (s.substring(i).startsWith("plus")) { op = '+'; break; }
+    if (s.substring(i).startsWith("minus")) { op = '-'; break; }
+    if (s.substring(i).startsWith("mal")) { op = '*'; break; }
+    if (s.substring(i).startsWith("geteilt")) { op = '/'; break; }
+    i++;
+  }
+  
+  if (op == ' ') return "Keine Rechnung erkannt";
+  
+  while (i < s.length() && !isDigit(s[i])) i++;
+  while (i < s.length() && isDigit(s[i])) {
+    num2 = num2 * 10 + (s[i] - '0');
+    i++;
+  }
+  
+  long result = 0;
+  switch(op) {
+    case '+': result = num1 + num2; break;
+    case '-': result = num1 - num2; break;
+    case '*': result = num1 * num2; break;
+    case '/': 
+      if (num2 == 0) return "Division durch Null!";
+      result = num1 / num2; 
+      break;
+  }
+  
+  return String(num1) + " " + op + " " + String(num2) + " = " + String(result);
+}
+
+// === HILFSFUNKTIONEN ===
+
+bool containsNumber(String s) {
+  for (int i = 0; i < s.length(); i++) {
+    if (isDigit(s[i])) return true;
+  }
+  return false;
+}
+
+bool isSingleWord(String s) {
+  for (int i = 0; i < s.length(); i++) {
+    if (s[i] == ' ') return false;
+  }
+  return s.length() > 0;
+}
